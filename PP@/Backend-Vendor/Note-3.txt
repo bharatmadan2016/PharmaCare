@@ -1,0 +1,55 @@
+BACKEND LOGIC: HOW YOUR PHARMACY APP WORKS (SIMPLE STORY VERSION)
+==============================================================
+
+Imagine your Pharmacy App is like a BUSY RESTAURANT. 
+
+1. THE BRAIN (The Server)
+-------------------------
+The "Backend" is like the KITCHEN of the restaurant. You don't see what's happening inside, but that's where all the cooking (logic) happens! The "App" on your phone or laptop is just the table where you sit.
+
+2. THE WAITER (The API)
+-----------------------
+When you click a button in the app, it's like calling a WAITER. 
+- You: "I want to add a new medicine!"
+- Waiter (API): Takes your request to the Kitchen (Backend).
+- Kitchen (Backend): Cooks the data and gives it back to the Waiter.
+- Waiter: Brings the "Success!" message back to your table (App).
+
+3. THE TEAM MEMBERS (MVC)
+-------------------------
+In our kitchen, we have three main types of workers. We call them M-V-C:
+
+A. THE ARCHITECT (Model - M):
+The Architect has a big notebook. He decides what a "Medicine" should look like. 
+Example: "Every medicine MUST have a Name, a Price, and an Expiry Date." 
+If you try to add a medicine without a name, the Architect will say, "Wait! This doesn't match my drawing!"
+
+B. THE BOSS (Controller - C):
+The Boss is the one who does the thinking. 
+- If you ask for the "Dashboard," the Boss counts all the orders in his head and calculates the total money. 
+- If he sees a medicine is almost finished (Stock < 20), he shouts, "LOW STOCK ALERT!" 
+
+C. THE MAP (Router - R):
+The Map is like the signs in the hallway. When the Waiter comes in, the Map tells him:
+- "If they want to Login, go to the Blue Door."
+- "If they want to see Medicines, go to the Green Door."
+
+4. THE BIG NOTEBOOK (Database)
+------------------------------
+Our kitchen has a GIANT MAGIC NOTEBOOK (called MongoDB). This notebook never forgets anything. Even if you turn off your computer, the notebook keeps all the medicine names and orders safe forever.
+
+5. THE SECRET PASSCODE (Authentication)
+--------------------------------------
+When you try to enter the kitchen, you need a SECRET PASSCODE (Login).
+- You give your Email and Password.
+- The Boss checks if they match what's written in his Big Notebook.
+- If they match, he gives you a "Magic Key Card" (called a Token). You use this card to prove you have permission to see the dashboard.
+
+6. THE HELPFUL TEACHER (Error Handling)
+---------------------------------------
+Sometimes, you might make a mistake, like forgetting to write the Price.
+The kitchen doesn't just crash. instead, a Helpful Teacher (Error Handler) sends a polite note back: 
+"Oops! You forgot the Price. Please check again!"
+
+SUMMARY IN 1 SENTENCE:
+The Backend is the secret engine that stores your data safely, calculates your money, and makes sure only you can see your pharmacy's secrets!

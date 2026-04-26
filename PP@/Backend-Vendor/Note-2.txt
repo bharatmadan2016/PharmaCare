@@ -1,0 +1,81 @@
+PHARMACY MANAGEMENT SYSTEM - BACKEND LOGIC EXPLANATION
+=====================================================
+
+This document explains the complete backend logic and architecture of the Pharmacy Management System.
+
+1. ARCHITECTURE (MVC PATTERN)
+----------------------------
+The backend follows the Model-View-Controller (MVC) architectural pattern:
+- MODELS: Define the data structure (Schemas) using Mongoose (MongoDB).
+- VIEWS: In this case, the frontend (React) acts as the view, consuming JSON data from this backend.
+- CONTROLLERS: Contain the business logic and handle incoming requests.
+- ROUTES: Map URL endpoints to specific controller functions.
+
+2. FOLDER STRUCTURE & FLOW
+--------------------------
+The logic starts from 'src/index.js' and flows through several layers:
+
+A. src/index.js (Entry Point)
+   - Loads environment variables from .env.
+   - Connects to the MongoDB database using connectDB().
+   - Once connected, it starts the Express server listening on PORT 8001.
+
+B. src/db/index.js (Database Connection)
+   - Uses Mongoose to connect to the MongoDB URI provided in .env.
+   - Appends the DB_NAME (pharmacy_app) to the connection string.
+
+C. src/app.js (App Configuration)
+   - Initializes the Express application.
+   - Configures Middlewares:
+     * CORS: Allows the frontend (running on a different port) to talk to the backend.
+     * JSON & URLencoded: Parses incoming request bodies (limit 16kb).
+     * Cookie Parser: Handles browser cookies.
+     * Request Logger: Logs every incoming request to the terminal for debugging.
+   - Registers Routes: Links URLs like '/api/v1/products' to the productRouter.
+   - Global Error Handler: A centralized block that catches all errors (ApiError) and returns them as clean JSON objects to the frontend.
+
+3. UTILITY FUNCTIONS (src/utils/)
+--------------------------------
+These help keep the code clean and reusable:
+- asyncHandler.js: A wrapper that catches errors in async functions automatically so we don't need try-catch blocks everywhere.
+- ApiError.js: A custom class to format error messages and status codes (e.g., 400 for Bad Request).
+- ApiResponse.js: A standard format for all successful responses sent to the frontend.
+
+4. LOGIC MODULES
+---------------
+
+A. PRODUCT & INVENTORY LOGIC (src/controllers/product.controller.js)
+   - Product Model: Defines fields like name, price, stock, and expiry.
+   - Logic:
+     * CREATE: Validates that all fields (name, price, stock, expiry) are present before saving.
+     * READ: Fetches all products and sorts them alphabetically.
+     * UPDATE: Modifies existing product details by ID.
+     * DELETE: Removes a product from the database.
+
+B. ORDER LOGIC (src/controllers/order.controller.js)
+   - Order Model: Stores customer details, items purchased, and total amounts.
+   - Logic: Fetches the list of orders to display on the dashboard and orders page.
+
+C. DASHBOARD LOGIC (src/controllers/dashboard.controller.js)
+   - This is the "brain" of the dashboard. It performs 3 main tasks:
+     1. Aggregates Stats: Counts total orders, pending orders, and calculates total revenue.
+     2. Recent History: Queries the 5 most recent orders from the database.
+     3. Low Stock Alerts: Finds any product where 'stock' is less than 20 units.
+
+5. ERROR HANDLING LOGIC
+----------------------
+If a request fails (e.g., a user tries to save a medicine without an expiry date):
+1. The Controller detects the missing field and "throws" an ApiError.
+2. The asyncHandler catches it.
+3. The Global Error Handler in 'app.js' takes the error and sends a JSON response to the browser:
+   { "success": false, "message": "Name, category, stock, price, and expiry are required" }
+4. The Frontend (React) receives this JSON and displays it as a popup alert to the user.
+
+6. API ENDPOINTS SUMMARY
+-----------------------
+- GET    /api/v1/dashboard/stats  -> Get dashboard analytics
+- GET    /api/v1/products        -> List all products
+- POST   /api/v1/products        -> Add a new product
+- PATCH  /api/v1/products/:id    -> Update a product
+- DELETE /api/v1/products/:id    -> Delete a product
+- GET    /api/v1/orders          -> List all orders

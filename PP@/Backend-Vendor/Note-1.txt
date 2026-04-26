@@ -1,0 +1,48 @@
+PHARMACY MANAGEMENT SYSTEM - BACKEND LOGIC SAMJHO (HINGLISH)
+============================================================
+
+Bhai, ye backend ka pura setup MVC pattern follow karta hai. Simple bhasha mein bolo toh ye model-view-controller ka khel hai.
+
+1. BAAKI CHEEZON KA FLOW (Workflow)
+----------------------------------
+Sabse pehle start hota hai 'src/index.js' se. 
+
+A. index.js: Ye entry point hai. Jaise hi tum server start karte ho, ye .env file se saari settings (Port, MongoDB ka address) load karta hai aur database connect karta hai.
+B. db/index.js: Iska kaam bas ye hai ki Mongoose ke through MongoDB se connection setup kar dena.
+C. app.js: Ye hamara main app configuration hai. Yahan saare middlewares (CORS, JSON parsing, logging) setup hote hain. Routes bhi yahin par register hote hain.
+
+2. MODELS (Data ka Structure)
+----------------------------
+Backend mein humne kuch basic models banaye hain:
+- Product Model: Medicine ki details (Name, Price, Stock, Expiry) store karne ke liye.
+- Order Model: Orders ki details store karne ke liye.
+- Vendor Model: Aapke login aur registration ke liye.
+
+3. LOGIC MODULES (Kaise kya hota hai)
+------------------------------------
+
+A. Dashboard Logic:
+Dashboard par jo aapko Total Revenue, Total Orders, aur Low Stock dikhta hai, wo sab backend calculate karta hai. 
+- Low Stock check karta hai ki agar stock 20 se kam hai toh alert de do.
+- Recent Transactions mein last 5 orders dikhata hai.
+
+B. Product / Inventory Logic:
+Yahan humne CRUD (Create, Read, Update, Delete) operations set kiye hain. 
+Naya product add karna ho, price change karna ho, ya Delete karna ho, Controller ye sab manage karta hai. Humne isme validation bhi lagayi hai ki agar tum Expiry Date nahi daloge toh error aayega.
+
+C. Authentication (Login/Register):
+Abhi humne login logic banaya hai:
+- loginVendor: Jab tum email aur password dalte ho, backend check karta hai ki wo sahi hai ya nahi.
+- Password hashing (bcryptjs) use kiya hai security ke liye, aur login hone par ek Token (JWT) generate hota hai jo tumhare browser ko batata hai ki tum logged in ho.
+
+4. ERROR HANDLING (Jab kuch galat ho jaye)
+-----------------------------------------
+Pehle frontend par bas 'Something went wrong' aata tha. Ab humne ek Global Error Handler banaya hai. Agar tum product add karte waqt kuch bhul jate ho, toh backend return karega ek saaf message JSON format mein (jaise ki "Expiry is required").
+
+5. API ENDPOINTS (Jo URLs frontend use karta hai)
+------------------------------------------------
+- /api/v1/dashboard/stats: Dashboard ka saara data lene ke liye.
+- /api/v1/products: Saari medicines ki list ya naya add karne ke liye.
+- /api/v1/vendors/login: Login karne ke liye.
+
+Summary: Backend ka kaam hai data ko database mein surakshit (secure) rakhna aur frontend (React) jo bhi mange usey sahi format mein dena.
