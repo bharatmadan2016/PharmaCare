@@ -11,6 +11,8 @@ app.use(cors({
     origin: [
         'http://localhost:5173',
         'https://pharma-care-tan.vercel.app',
+        'https://insightful-benevolence-production-2ef7.up.railway.app',
+        'https://pharma-care-i8y23kyhk-bharatmadan2016s-projects.vercel.app',
     ],
     credentials: true,
 }));

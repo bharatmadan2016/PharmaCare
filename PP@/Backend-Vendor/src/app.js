@@ -8,6 +8,8 @@ app.use(cors({
     origin: [
         'http://localhost:5173',
         'https://pharma-care-tan.vercel.app',  
+        'https://pharmacare-production-b6cf.up.railway.app',
+        'https://pharma-care-i8y23kyhk-bharatmadan2016s-projects.vercel.app',
     ],
     credentials: true
 }))
