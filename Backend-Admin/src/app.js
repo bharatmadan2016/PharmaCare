@@ -8,12 +8,21 @@ import adminRouter from "./routes/admin.routes.js";
 const app = express();
 
 app.use(cors({
-    origin: [
-        'http://localhost:5173',
-        'https://pharma-care-tan.vercel.app',
-        'https://insightful-benevolence-production-2ef7.up.railway.app',
-        'https://pharma-care-i8y23kyhk-bharatmadan2016s-projects.vercel.app',
-    ],
+    origin: function (origin, callback) {
+        const allowedOrigins = [
+            'http://localhost:5173',
+            'https://pharma-care-tan.vercel.app',
+            'https://insightful-benevolence-production-2ef7.up.railway.app',
+            'https://pharma-care-i8y23kyhk-bharatmadan2016s-projects.vercel.app'
+        ];
+        // Allow requests with no origin (like mobile apps or curl)
+        // or check if origin is in the allowed list or is a vercel.app domain
+        if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true,
 }));
 
@@ -28,6 +37,15 @@ app.get("/", (req, res) => {
 
 app.use("/api/v1/users", router);
 app.use("/api/v1/admin", adminRouter);
+
+// 404 handler for unmatched routes
+app.use((req, res) => {
+    res.status(404).json({
+        success: false,
+        statusCode: 404,
+        message: "Route not found",
+    });
+});
 
 app.use((err, req, res, next) => {
     console.error(err);

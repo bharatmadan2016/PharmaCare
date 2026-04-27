@@ -5,12 +5,19 @@ import cookieParser from "cookie-parser"
 const app = express()
 
 app.use(cors({
-    origin: [
-        'http://localhost:5173',
-        'https://pharma-care-tan.vercel.app',  
-        'https://pharmacare-production-b6cf.up.railway.app',
-        'https://pharma-care-i8y23kyhk-bharatmadan2016s-projects.vercel.app',
-    ],
+    origin: function (origin, callback) {
+        const allowedOrigins = [
+            'http://localhost:5173',
+            'https://pharma-care-tan.vercel.app',  
+            'https://pharmacare-production-b6cf.up.railway.app',
+            'https://pharma-care-i8y23kyhk-bharatmadan2016s-projects.vercel.app',
+        ];
+        if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS'));
+        }
+    },
     credentials: true
 }))
 
@@ -43,6 +50,15 @@ app.use("/api/v1/orders", orderRouter)
 app.use("/api/v1/products", productRouter)
 app.use("/api/v1/vendors", vendorRouter)
 app.use("/api/v1/pharmacies", pharmacyRouter)
+
+// 404 handler for unmatched routes
+app.use((req, res) => {
+    res.status(404).json({
+        success: false,
+        statusCode: 404,
+        message: "Route not found",
+    });
+});
 
 // Global Error Handler
 app.use((err, req, res, next) => {
