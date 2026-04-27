@@ -8,8 +8,11 @@ import adminRouter from "./routes/admin.routes.js";
 const app = express();
 
 app.use(cors({
-    origin: process.env.CORS_ORIGIN || "*",
-    credentials: false,
+    origin: [
+        'http://localhost:5173',
+        'https://pharma-care-tan.vercel.app',  // ✅ Vercel URL
+    ],
+    credentials: true,  // ✅ true karo
 }));
 
 app.use(express.json({ limit: "16kb" }));
