@@ -5,7 +5,10 @@ import cookieParser from "cookie-parser"
 const app = express()
 
 app.use(cors({
-    origin: true, // This allows requests from any origin with credentials
+    origin: [
+        'http://localhost:5173',
+        'https://pharma-care-tan.vercel.app',  
+    ],
     credentials: true
 }))
 
@@ -20,6 +23,10 @@ app.use(express.urlencoded({extended: true, limit: "16kb"}))
 app.use(express.static("public"))
 app.use(cookieParser())
 
+// ✅ Root route add kiya
+app.get("/", (req, res) => {
+    res.send("Vendor Backend is running ✅");
+});
 
 //routes import
 import dashboardRouter from './routes/dashboard.routes.js'

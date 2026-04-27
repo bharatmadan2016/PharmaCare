@@ -10,17 +10,18 @@ const app = express();
 app.use(cors({
     origin: [
         'http://localhost:5173',
-        'https://pharma-care-tan.vercel.app',  // ✅ Vercel URL
+        'https://pharma-care-tan.vercel.app',
     ],
-    credentials: true,  // ✅ true karo
+    credentials: true,
 }));
 
 app.use(express.json({ limit: "16kb" }));
 app.use(morgan("dev"));
 app.use(cookieParser());
 
+
 app.get("/", (req, res) => {
-    res.send("Backend is running");
+    res.send("Admin Backend is running");
 });
 
 app.use("/api/v1/users", router);
