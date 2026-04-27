@@ -4,11 +4,10 @@ import app from "./app.js";
 
 dotenv.config();
 
-const PORT = process.env.PORT || 9000;
-
 // Start server only after DB connects
 connectDB()
 .then(() => {
+    const PORT = process.env.PORT || 9000;
     app.listen(PORT, "0.0.0.0", () => {
         console.log(`🚀 Server running on port ${PORT}`);
     });
