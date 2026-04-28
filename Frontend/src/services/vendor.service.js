@@ -1,6 +1,14 @@
 import { handleResponse, normalizeSessionPayload } from "./auth.service.js";
 
-const VENDOR_API_URL = import.meta.env.VITE_VENDOR_API_URL || "http://localhost:8001";
+const VENDOR_API_URL = import.meta.env.PROD
+  ? "https://pharmacare-production-b6cf.up.railway.app"
+  : (import.meta.env.VITE_VENDOR_API_URL || "http://localhost:8001");
+
+// Debugging log to catch 405 issues on Vercel
+if (import.meta.env.PROD) {
+  console.log("Using Vendor API URL:", VENDOR_API_URL);
+}
+
 const VENDOR_STORAGE_KEYS = ["vendorUser", "vendorAccessToken"];
 
 function getVendorAccessToken() {

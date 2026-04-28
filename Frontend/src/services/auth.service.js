@@ -1,4 +1,11 @@
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8005";
+const API_URL = import.meta.env.PROD
+  ? "https://insightful-benevolence-production-2ef7.up.railway.app"
+  : (import.meta.env.VITE_API_URL || "http://localhost:8005");
+
+if (import.meta.env.PROD) {
+  console.log("Using Admin API URL:", API_URL);
+}
+
 const AUTH_STORAGE_KEYS = ["user", "accessToken"];
 
 async function handleResponse(response) {
