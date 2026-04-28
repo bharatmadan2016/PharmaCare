@@ -13,12 +13,11 @@ const giveRequestOfVerification = asyncHandler(async (req, res) => {
         throw new ApiError(404, "Vendor not found");
     }
     
-    if (vendor.verificationStatus === "pending") {
-        throw new ApiError(400, "Verification request already pending");
+    if (vendor.status === "approved") {
+        throw new ApiError(400, "Vendor is already approved");
     }
     
-    vendor.verificationStatus = "pending";
-    vendor.isApproved = false;
+    vendor.status = "pending";
     await vendor.save();
     
     return res.status(200).json(

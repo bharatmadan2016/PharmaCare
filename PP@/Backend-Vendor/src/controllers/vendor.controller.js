@@ -10,10 +10,12 @@ const loginVendor = asyncHandler(async (req, res) => {
         throw new ApiError(400, "Email and password are required");
     }
 
-    const vendor = await Vendor.findOne({ email });
+    const vendor = await Vendor.findOne({ 
+        email: email.toLowerCase() 
+    });
 
     if (!vendor) {
-        throw new ApiError(404, "Vendor does not exist");
+        throw new ApiError(404, "Vendor account not found. Please register if you haven't already.");
     }
 
     const isPasswordValid = await vendor.isPasswordCorrect(password);

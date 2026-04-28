@@ -32,10 +32,18 @@ const getAllVendors = async () => {
 
     return response.data.data ?? [];
   } catch (error) {
+    console.error(`[Admin Service] Error fetching vendors from ${VENDOR_BASE_URL}:`, error.message);
+    
     if (isNetworkFailure(error)) {
+      console.warn("[Admin Service] Vendor backend is unreachable. Returning empty array.");
       return [];
     }
-    wrapVendorError(error, "Failed to fetch vendors");
+
+    if (error.response?.status === 403) {
+      console.error("[Admin Service] INTERNAL_API_KEY mismatch or missing.");
+    }
+
+    wrapVendorError(error, "Failed to fetch vendors from vendor backend");
   }
 };
 

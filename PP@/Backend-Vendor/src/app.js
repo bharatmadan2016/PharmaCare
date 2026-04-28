@@ -8,6 +8,8 @@ app.use(cors({
     origin: function (origin, callback) {
         const allowedOrigins = [
             'http://localhost:5173',
+            'http://localhost:5174',
+            'http://localhost:5175',
             'https://pharma-care-tan.vercel.app',  
             'https://pharmacare-production-b6cf.up.railway.app',
             'https://pharma-care-i8y23kyhk-bharatmadan2016s-projects.vercel.app',
@@ -15,6 +17,7 @@ app.use(cors({
         if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
             callback(null, true);
         } else {
+            console.error("CORS Error: Origin not allowed:", origin);
             callback(new Error('Not allowed by CORS'));
         }
     },

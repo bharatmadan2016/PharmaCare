@@ -87,7 +87,7 @@ const fetchDashboardOverview = asyncHandler(async (req, res) => {
   ]);
 
   const customerUsers = users.filter((user) => user.role === "User");
-  const pendingVendors = vendors.filter((vendor) => vendor.status !== "approved");
+  const pendingVendors = vendors.filter((vendor) => !vendor.status || vendor.status !== "approved");
   const approvedVendors = vendors.filter((vendor) => vendor.status === "approved");
   const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
   const newUsersThisWeek = customerUsers.filter(
@@ -226,7 +226,7 @@ const fetchReportsController = asyncHandler(async (req, res) => {
     },
     vendorBreakdown: {
       approved: safeVendors.filter((vendor) => vendor.status === "approved").length,
-      pending: safeVendors.filter((vendor) => vendor.status !== "approved").length,
+      pending: safeVendors.filter((vendor) => !vendor.status || vendor.status !== "approved").length,
     },
     orderBreakdown: {
       total: safeOrders.length,
