@@ -35,9 +35,9 @@ app.use(express.urlencoded({extended: true, limit: "16kb"}))
 app.use(express.static("public"))
 app.use(cookieParser())
 
-// ✅ Root route add kiya
+
 app.get("/", (req, res) => {
-    res.send("Vendor Backend is running ✅");
+    res.send("Vendor Backend is running ");
 });
 
 //routes import
