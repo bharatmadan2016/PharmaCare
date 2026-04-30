@@ -93,9 +93,7 @@ const comparePrices = asyncHandler(async (req, res) => {
             }
         ]);
 
-        // MongoDB aggregate doesn't support $geoNear after $lookup easily for 2dsphere on joined docs
-        // So we just use simple population and manual sorting or just return first results
-        // Actually, let's just do a simple find and populate for now to keep it stable
+        //Above Logic fails to fetch sometimes due beause of the $geoNear stage. So we will do the geospatial filtering in-memory after fetching the relevant products.
         results = await Product.find({
             name: { $regex: medicineName, $options: "i" }
         })
