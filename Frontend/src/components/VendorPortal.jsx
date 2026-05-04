@@ -138,12 +138,12 @@ function VendorDashboardPage({ stats, loading }) {
 
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         <StatCard icon={Clock} value={stats.totalOrders ?? 0} label="Total Orders" color="blue" />
-        <StatCard
+        {/* <StatCard
           icon={DollarSign}
           value={`Rs ${Number(stats.totalRevenue ?? 0).toFixed(2)}`}
           label="Total Revenue"
           color="emerald"
-        />
+        /> */}
         <StatCard icon={AlertTriangle} value={stats.lowStockCount ?? 0} label="Low Stock Alerts" color="orange" />
         <StatCard icon={Package} value={stats.pendingOrders ?? 0} label="Pending Orders" color="purple" />
       </div>
