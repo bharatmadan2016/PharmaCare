@@ -1,7 +1,22 @@
 import axios from "axios";
+import mongoose from "mongoose";
 import { ApiError } from "../utils/apiError.js";
 
-const API_ROOT = process.env.VENDOR_API_ROOT || "http://localhost:8001/api/v1";
+const isProductionRuntime =
+  process.env.NODE_ENV === "production" || Boolean(process.env.RAILWAY_ENVIRONMENT);
+
+const DEFAULT_VENDOR_API_ROOT =
+  isProductionRuntime
+    ? "https://pharmacare-production-a16b.up.railway.app/api/v1"
+    : "http://localhost:8001/api/v1";
+
+const normalizeApiRoot = (value = DEFAULT_VENDOR_API_ROOT) => {
+  const trimmedValue = value.trim().replace(/\/+$/, "") || DEFAULT_VENDOR_API_ROOT;
+
+  return trimmedValue.endsWith("/api/v1") ? trimmedValue : `${trimmedValue}/api/v1`;
+};
+
+const API_ROOT = normalizeApiRoot(process.env.VENDOR_API_ROOT);
 const VENDOR_BASE_URL = `${API_ROOT}/vendors`;
 const ORDER_BASE_URL = `${API_ROOT}/orders`;
 const DASHBOARD_BASE_URL = `${API_ROOT}/dashboard`;
@@ -24,6 +39,48 @@ const isNetworkFailure = (error) =>
   error.message?.includes("connect") ||
   error.message?.includes("Network");
 
+const vendorProjection = {
+  password: 0,
+  refreshToken: 0,
+};
+
+const getVendorsFromDatabase = async () => {
+  const vendors = await mongoose.connection
+    .collection("vendors")
+    .find({}, { projection: vendorProjection })
+    .sort({ createdAt: -1 })
+    .toArray();
+
+  return vendors;
+};
+
+const approveVendorInDatabase = async (vendorId) => {
+  const { ObjectId } = mongoose.Types;
+
+  if (!ObjectId.isValid(vendorId)) {
+    throw new ApiError(400, "Invalid vendor id");
+  }
+
+  const result = await mongoose.connection
+    .collection("vendors")
+    .findOneAndUpdate(
+      { _id: new ObjectId(vendorId) },
+      { $set: { status: "approved" } },
+      {
+        projection: vendorProjection,
+        returnDocument: "after",
+      },
+    );
+
+  const vendor = result.value ?? result;
+
+  if (!vendor) {
+    throw new ApiError(404, "Vendor not found");
+  }
+
+  return vendor;
+};
+
 const getAllVendors = async () => {
   try {
     const response = await axios.get(VENDOR_BASE_URL, {
@@ -33,14 +90,20 @@ const getAllVendors = async () => {
     return response.data.data ?? [];
   } catch (error) {
     console.error(`[Admin Service] Error fetching vendors from ${VENDOR_BASE_URL}:`, error.message);
-    
-    if (isNetworkFailure(error)) {
-      console.warn("[Admin Service] Vendor backend is unreachable. Returning empty array.");
-      return [];
-    }
 
     if (error.response?.status === 403) {
       console.error("[Admin Service] INTERNAL_API_KEY mismatch or missing.");
+    }
+
+    try {
+      console.warn("[Admin Service] Falling back to vendors collection in admin database.");
+      return await getVendorsFromDatabase();
+    } catch (dbError) {
+      console.error("[Admin Service] Database fallback failed while fetching vendors:", dbError.message);
+    }
+
+    if (isNetworkFailure(error)) {
+      return [];
     }
 
     wrapVendorError(error, "Failed to fetch vendors from vendor backend");
@@ -59,6 +122,15 @@ const approveVendor = async (vendorId) => {
 
     return response.data.data;
   } catch (error) {
+    console.error(`[Admin Service] Error approving vendor through ${VENDOR_BASE_URL}:`, error.message);
+
+    try {
+      console.warn("[Admin Service] Falling back to vendors collection for approval.");
+      return await approveVendorInDatabase(vendorId);
+    } catch (dbError) {
+      console.error("[Admin Service] Database fallback failed while approving vendor:", dbError.message);
+    }
+
     wrapVendorError(error, "Failed to approve vendor");
   }
 };
