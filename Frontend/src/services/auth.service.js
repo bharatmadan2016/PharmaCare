@@ -1,4 +1,8 @@
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8005";
+const DEFAULT_ADMIN_API_URL = import.meta.env.DEV
+  ? "http://localhost:8005"
+  : "https://amused-learning-production-5d8d.up.railway.app";
+
+const API_URL = (import.meta.env.VITE_API_URL || DEFAULT_ADMIN_API_URL).replace(/\/+$/, "");
 
 console.log("Using Admin API URL:", API_URL);
 

@@ -7,6 +7,12 @@ import adminRouter from "./routes/admin.routes.js";
 
 const app = express();
 
+const parseOrigins = (value = "") =>
+    value
+        .split(",")
+        .map((origin) => origin.trim())
+        .filter(Boolean);
+
 app.use(cors({
     origin: function (origin, callback) {
         const allowedOrigins = [
@@ -15,9 +21,16 @@ app.use(cors({
             'http://localhost:5175',
             'https://pharma-care-tan.vercel.app',
             'https://insightful-benevolence-production-2ef7.up.railway.app',
-            'https://pharma-care-i8y23kyhk-bharatmadan2016s-projects.vercel.app'
+            'https://pharma-care-i8y23kyhk-bharatmadan2016s-projects.vercel.app',
+            ...parseOrigins(process.env.FRONTEND_URL),
+            ...parseOrigins(process.env.CORS_ORIGINS),
         ];
-        if (!origin || allowedOrigins.includes(origin) || origin.endsWith('.vercel.app')) {
+        if (
+            !origin ||
+            allowedOrigins.includes(origin) ||
+            origin.endsWith('.vercel.app') ||
+            origin.endsWith('.up.railway.app')
+        ) {
             callback(null, true);
         } else {
             console.error("CORS Error: Origin not allowed:", origin);
